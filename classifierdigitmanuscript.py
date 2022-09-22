@@ -53,20 +53,25 @@ def accuracy(y_true, y_pred):
   return acc
 
 from sklearn.datasets import fetch_openml, load_digits
+from keras.datasets import mnist
 import numpy as np
 import pandas as pd 
 import matplotlib.pyplot as plt
 import matplotlib
 
-mnist = fetch_openml("mnist_784") 
+#mnist = fetch_openml("mnist_784") 
 #load_digits()
+(train_X, train_y), (test_X, test_y) = mnist.load_data()
 
 # checking the column names and preprocessing target values in standard format
-mnist.keys()
-mnist.target = mnist.target.astype(np.int8)
+#mnist.keys()
+#mnist.target = mnist.target.astype(np.int8)
+
 #Determining independent and dependent variable and finding the shape
-x = np.array(mnist.data)
-y = np.array(mnist.target)
+x = np.array(train_X)
+x = x.reshape(len(x),784)
+y = np.array(train_y)
+
 print(x.shape, y.shape)
 #output ((70000, 784), (70000,))
 # shuffling the values of x and y
@@ -76,14 +81,14 @@ y = y[si]
 
 some_digit = x[12]
 some_digit_image = some_digit.reshape(28, 28)
-print(some_digit_image)
+
 plt.imshow(some_digit_image, cmap=matplotlib.cm.binary)
 plt.axis("off")
 plt.show()
 
 #slicing data
-trainx = x[:2000]
-trainy = y[:2000]
+trainx = x
+trainy = y
 #Inserting trainy in trainx
 train = np.insert(trainx, 784, trainy, axis = 1)
 prediction = predict_classification(train, train[1244], 4)
@@ -96,13 +101,20 @@ train[1244][-1]
 some_digit = train[1244][:-1]
 some_digit_image = some_digit.reshape(28, 28)
 plt.imshow(some_digit_image, cmap=matplotlib.cm.binary)
+#plt.imshow(some_digit_image, cmap=plt.get_cmap('gray'))
+
 plt.axis("off")
 plt.show()
 
+#test_X, test_y are used to evaluate accuracy
 y_pred=[]
-y_true=train[:,-1]
-for i in range(len(train)):
-  prediction = predict_classification(train, train[i], 4)
+y_true=test_y
+
+eval_X = np.array(test_X)
+eval_X = eval_X.reshape(len(eval_X),784)
+
+for i in range(len(eval_X)):
+  prediction = predict_classification(train, eval_X[i], 4)
   y_pred.append(prediction)
 # Accuracy
 accuracy(y_true, y_pred)
