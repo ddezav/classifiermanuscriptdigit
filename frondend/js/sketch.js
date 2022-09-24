@@ -20,9 +20,9 @@ function setup() {
     qt.show();
 }
  */
-header("Access-Control-Allow-Origin: *");
 
 let qt;
+let urlminix="http://localhost:8000/dibujo/"
 let count = 0;
 let arreglo  =[];
 let escala   = 10;
@@ -92,4 +92,16 @@ function draw() {
     }
 
  
+}
+
+function cargarImagenMinix(){
+    const Http = new XMLHttpRequest();
+    const url=urlminix+"4";
+    Http.open("GET", url);
+    Http.send();
+
+    Http.onreadystatechange = (e) => {
+     console.log(Http.responseText)
+    }
+
 }
