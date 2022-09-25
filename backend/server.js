@@ -18,6 +18,18 @@ fs.createReadStream("./mnist_train.csv")
 
 const express = require('express')
 const app = express()
+function listToMatrix(list, elementsPerSubArray) {
+   
+
+  for(let i = 0; i < 28 ; i++){
+      for(let j = 0; j < 28 ; j++){
+              arreglo[i][j]=parseInt(list[j*28+i]);
+      }
+  }
+
+
+}
+
 
 app.use(cors({
   origin: '*'
