@@ -103,13 +103,21 @@ function cargarImagenMinix(){
         if(e.currentTarget.readyState==4 && e.currentTarget.status==200){
             let data = int(JSON.parse(Http.responseText));
             console.log(data)
-            console.log(HOG(data));
+
+            var arr = [];
+            for(let i = 0; i < 28 ; i++){
+                arr[i]=[];
+                for(let j = 0; j < 28 ; j++){
+                    arr[i][j] = data[j*28+i];
+                }
+            }
+            console.log(HOG(arr));
         }
     }
 
 }
 
-function HOG(data){
+function HOG(arr){
 
     const kernelX = [
     [-1,0,1],
@@ -122,13 +130,6 @@ function HOG(data){
     [0,0,0],
     [1,2,1]
     ];
-    var arr = [];
-    for(let i = 0; i < 28 ; i++){
-        arr[i]=[];
-        for(let j = 0; j < 28 ; j++){
-            arr[i][j] = data[j*28+i];
-        }
-    }
 
 
     sobelData = [];
