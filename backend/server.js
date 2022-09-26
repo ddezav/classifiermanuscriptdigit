@@ -65,6 +65,23 @@ function matrizConfusion(){
 
 
 
+// create k-dtree with mnist_train
+function build_kdtree_mnist(){
+  data_withHOG = arr;
+  root = build_kdtree(data_withHOG);
+}
+
+// return the class of input image with out processing
+function clasificar(X){
+  points_knn=[];
+  k_closest_point(root,query_point,0,best);        
+  console.log("knn", points_knn);
+  let txt = "";
+
+  points_knn.forEach(element => {
+    txt += (element.point+ "=>"+element.d+"\n");
+  });
+}
 
 app.use(cors({
   origin: '*'

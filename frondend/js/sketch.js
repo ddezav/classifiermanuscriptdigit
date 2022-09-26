@@ -38,7 +38,17 @@ function setup() {
  
     createCanvas(tamanio*escala,tamanio*escala);
 
+<<<<<<< HEAD
 
+=======
+    
+    // d3.csv("./mnist_train,csv", function(data) {
+    //     for (var i = 0; i < 2; i++) {
+    //         console.log(data );
+            
+    //     }
+    // });
+>>>>>>> 03e90459905d7ceb9d9dd895d50085ab58fef5a5
 }
 
 function draw() {
@@ -84,18 +94,22 @@ function draw() {
           
         }
     }
-
  
 }
 
 function cargarImagenMinix(){
     const Http = new XMLHttpRequest();
+<<<<<<< HEAD
     let idMnist = document.getElementById('idMnist').value
     const url=urlminix+idMnist;
+=======
+    const url=urlminix+"2";
+>>>>>>> 03e90459905d7ceb9d9dd895d50085ab58fef5a5
     Http.open("GET", url);
     Http.send();
     console.log(url);
     Http.onreadystatechange = (e) => {
+<<<<<<< HEAD
         let obj = JSON.parse(Http.responseText);
         console.log('que numero es ' , obj[0]);
        
@@ -111,8 +125,116 @@ function listToMatrix(list, elementsPerSubArray) {
     for(let i = 0; i < 28 ; i++){
         for(let j = 0; j < 28 ; j++){
                 arreglo[i][j]=parseInt(list[j*28+i]);
+=======
+        if(e.currentTarget.readyState==4 && e.currentTarget.status==200){
+            let data1 = JSON.parse(Http.responseText);
+            let data = data1.map(function (x) { 
+                return parseInt(x, 10); 
+            });
+            console.log(data)
+
+            var arr = [];
+            for(let i = 0; i < 28 ; i++){
+                arr[i]=[];
+                for(let j = 0; j < 28 ; j++){
+                    arr[i][j] = data[j*28+i];
+                }
+            }
+            console.log(HOG(arr));
+>>>>>>> 03e90459905d7ceb9d9dd895d50085ab58fef5a5
         }
     }
 
 
 }
+
+function HOG(arr){
+
+    const kernelX = [
+    [-1,0,1],
+    [-2,0,2],
+    [-1,0,1]
+    ];
+
+    const kernelY = [
+    [-1,-2,-1],
+    [0,0,0],
+    [1,2,1]
+    ];
+
+
+    sobelData = [];
+    angles = [];
+    for (y = 0; y < 28; y++) {
+        sobelData[y] = [];
+        angles[y] = [];
+        for (x = 0; x < 28; x++) {
+            var pixelX = (
+                (kernelX[0][0] * arr[(x-1<0)?x:(x-1)][(y-1<0)?y:(y-1)]) +
+                (kernelX[0][1] * arr[x][(y-1<0)?y:(y-1)]) +
+                (kernelX[0][2] * arr[(x+1>x)?x:(x+1)][(y-1<0)?y:(y-1)]) +
+                (kernelX[1][0] * arr[(x-1<0)?x:(x-1)][y]) +
+                (kernelX[1][1] * arr[x][y]) +
+                (kernelX[1][2] * arr[(x+1>x)?x:(x+1)][y]) +
+                (kernelX[2][0] * arr[(x-1<0)?x:(x-1)][(y+1>y)?y:(y+1)]) +
+                (kernelX[2][1] * arr[x][(y+1>y)?y:(y+1)]) +
+                (kernelX[2][2] * arr[(x+1>x)?x:(x+1)][(y+1>y)?y:(y+1)])
+            );
+    
+            var pixelY = (
+                (kernelY[0][0] * arr[(x-1<0)?x:(x-1)][(y-1<0)?y:(y-1)]) +
+                (kernelY[0][1] * arr[x][(y-1<0)?y:(y-1)]) +
+                (kernelY[0][2] * arr[(x+1>x)?x:(x+1)][(y-1<0)?y:(y-1)]) +
+                (kernelY[1][0] * arr[(x-1<0)?x:(x-1)][y]) +
+                (kernelY[1][1] * arr[x][y]) +
+                (kernelY[1][2] * arr[(x+1>x)?x:(x+1)][y]) +
+                (kernelY[2][0] * arr[(x-1<0)?x:(x-1)][(y+1>y)?y:(y+1)]) +
+                (kernelY[2][1] * arr[x][(y+1>y)?y:(y+1)]) +
+                (kernelY[2][2] * arr[(x+1>x)?x:(x+1)][(y+1>y)?y:(y+1)])
+            );
+            var magnitude = Math.sqrt((pixelX * pixelX) + (pixelY * pixelY))>>>0;
+            let angle = Math.atan(pixelY/pixelX)+Math.PI/2;
+            angle = angle/Math.PI*180;
+    
+            sobelData[y].push(magnitude);
+            angles[y].push(angle);
+        }
+    }
+    console.log(sobelData);
+    console.log(angles);
+
+    h = [];
+    for (let i = 0; i < 7; i++) {
+        for (let j = 0; j < 7; j++) {
+            h[i*7+j] = [0,0,0,0,0,0];
+            for (let a = 0; a < 4; a++) {
+                a:for (let b = 0; b < 4; b++) {
+                    let value = angles[i*4+a][j*4+b];
+                    if(isNaN(value))
+                        continue a;
+                    if(value > 0 && value <= 30 || value <= 180 && value > 150){
+                        h[i*7+j][0] += sobelData[i*4+a][j*4+b] / 2;
+                        h[i*7+j][5] += sobelData[i*4+a][j*4+b] / 2;
+                    }
+                    if(value > 30 && value <=60)
+                        h[i*7+j][1] += sobelData[i*4+a][j*4+b];
+                    if(value > 60 && value <=90)
+                        h[i*7+j][2] += sobelData[i*4+a][j*4+b];
+                    if(value > 90 && value <=120)
+                        h[i*7+j][3] += sobelData[i*4+a][j*4+b];
+                    if(value > 120 && value <=150)
+                        h[i*7+j][4] += sobelData[i*4+a][j*4+b];
+                }
+            }
+        }
+    }
+    console.log(h);
+    let final = [];
+    for (let i = 0; i < h.length; i++) {
+        const element = h[i];
+        final = final.concat(element);        
+    }
+    return final;
+}
+
+cargarImagenMinix();
