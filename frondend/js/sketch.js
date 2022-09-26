@@ -25,7 +25,7 @@ let qt;
 let urlminix="http://localhost:8000/dibujo/"
 let count = 0;
 let arreglo  =[];
-let escala   = 10;
+let escala   = 20;
 let tamanio = 28 ;
 let degradado = 50;
 function setup() {
@@ -38,13 +38,7 @@ function setup() {
  
     createCanvas(tamanio*escala,tamanio*escala);
 
-    
-    d3.csv("./mnist_train,csv", function(data) {
-        for (var i = 0; i < 2; i++) {
-            console.log(data );
-            
-        }
-    });
+
 }
 
 function draw() {
@@ -96,12 +90,29 @@ function draw() {
 
 function cargarImagenMinix(){
     const Http = new XMLHttpRequest();
-    const url=urlminix+"4";
+    let idMnist = document.getElementById('idMnist').value
+    const url=urlminix+idMnist;
     Http.open("GET", url);
     Http.send();
-
+    console.log(url);
     Http.onreadystatechange = (e) => {
-     console.log(Http.responseText)
+        let obj = JSON.parse(Http.responseText);
+        console.log('que numero es ' , obj[0]);
+       
+        obj.shift();
+        listToMatrix(obj,tamanio);
     }
+
+}
+
+function listToMatrix(list, elementsPerSubArray) {
+   
+
+    for(let i = 0; i < 28 ; i++){
+        for(let j = 0; j < 28 ; j++){
+                arreglo[i][j]=parseInt(list[j*28+i]);
+        }
+    }
+
 
 }
