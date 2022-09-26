@@ -1,4 +1,4 @@
-import {  Knn } from "./knnFake.js";
+const Knn = require('./knnFake.js');
 
 const host = 'localhost';
 const port = 8000;
@@ -10,7 +10,7 @@ let testData = [];
 const cors = require('cors');
 
 
-fs.createReadStream("./mnist_train.csv")
+fs.createReadStream("mnist_test.csv")
   .pipe(parse({ delimiter: ",", from_line: 2 }))
   .on("data", function (row) {
     arr.push(row);
@@ -19,7 +19,7 @@ fs.createReadStream("./mnist_train.csv")
 
 
 
-  fs.createReadStream("./mnist_test.csv")
+  fs.createReadStream("mnist_test.csv")
   .pipe(parse({ delimiter: ",", from_line: 2 }))
   .on("data", function (row) {
     testData.push(row);
@@ -56,13 +56,6 @@ function mostrarACurracy(){
 
 
 }
-
-function matrizConfusion(){
-
-
-
-}
-
 
 function listToMatrix(list) {
    
