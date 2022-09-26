@@ -22,7 +22,9 @@ function setup() {
  */
 
 let qt;
-let urlminix="http://localhost:8000/dibujo/"
+let urlminix="http://localhost:8000/dibujo/";
+let urlClasi="http://localhost:8000/clasificar/"
+
 let count = 0;
 let arreglo  =[];
 let escala   = 20;
@@ -113,6 +115,25 @@ function listToMatrix(list, elementsPerSubArray) {
                 arreglo[i][j]=parseInt(list[j*28+i]);
         
         }
+    }
+
+
+}
+function clasificar(){
+    const Http = new XMLHttpRequest();
+    let idMnist = document.getElementById('idMnist').value
+    const url=urlClasi;
+
+    Http.open("POST", url);
+    console.log('arreglo',arreglo);
+    Http.send(JSON.stringify(arreglo));
+    console.log(url);
+    Http.onreadystatechange = (e) => {
+        let obj = JSON.parse(Http.responseText);
+        console.log('que numero es ' , obj  );
+        alert(obj);
+        
+     
     }
 
 

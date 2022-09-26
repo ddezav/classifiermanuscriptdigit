@@ -1,4 +1,4 @@
-const Knn = require('./knnFake.js');
+const Knn = require('./knn.js');
 
 const host = 'localhost';
 const port = 8000;
@@ -42,11 +42,7 @@ function listToMatrix(list) {
 
 
 }
-function clasificar (list){
-  let knn = new Knn();
-  return knn.clasificar(list);
-    
-}
+
 
 let acuracy = [];
 let matrizConfusion = [];
@@ -93,8 +89,15 @@ function build_kdtree_mnist(){
 
 // return the class of input image with out processing
 function clasificar(X){
-  points_knn=[];
   arr28x28 = listToMatrix(X); 
+ 
+  clasificarMatriz(arr28x28);
+ 
+}
+
+function clasificarMatriz(arr28x28){
+  points_knn=[];
+ 
   query_point = HOG(arr28x28);
   best = null;
   k_closest_point(root_kdtree,query_point,0,best);        
@@ -115,6 +118,7 @@ function clasificar(X){
     }    
   }
   console.log(max_class);
+  return max_class;
 }
 
 
@@ -174,9 +178,10 @@ app.get('/dibujo/:id', (req, res) => {
   res.send(arr[req.params.id]);
   console.log(arr[req.params.id]);
 })
-app.get('/accuracy', (req, res) => {
-  res.send(arr[req.params.id]);
-  console.log(arr[req.params.id]);
+app.post('/clasificar', (req, res) => {
+  console.log(req);
+  res.send(clasificarMatriz(JSON.parse(req.body)));
+ 
 })
 
 app.get('/accuracy', (req, res) => {
