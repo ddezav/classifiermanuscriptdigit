@@ -19,8 +19,19 @@ const cors = require('cors');
 fs.createReadStream("mnist_test.csv")
   .pipe(parse({ delimiter: ",", from_line: 2 }))
   .on("data", function (row) {
+    if(row.length> 0  && arr.length< 10000){
+        
     arr.push(row);
-   
+  
+    }
+    
+  }
+  ).on("close",function(){
+    //console.log(arr.length);
+    //console.log(arr[0].length);
+    
+    build_kdtree_mnist();
+    console.log("termino de crea kdtree")
   })
 
 
@@ -48,6 +59,8 @@ function listToMatrix(list) {
 
 
 }
+
+
 
 
 let acuracy = [];
@@ -79,7 +92,9 @@ function listToMatrix(list) {
 function build_kdtree_mnist(){
   
   data_preprocessed = [];
-  arr.forEach(row => {
+ // ////console.log('data mnit',arr[0])
+  for(let ik = 0 ; ik < arr.length ; ik++){
+    let row = arr[ik];
     clase = row[0];
     data = row.slice(1,row.length);
     
@@ -88,9 +103,10 @@ function build_kdtree_mnist(){
 
     row_preprocessed = [clase,row_withHOG];
     data_preprocessed.push(row_preprocessed);
-  });
+ 
+}
   root_kdtree = build_kdtree(data_preprocessed);
-  console.log(root_kdtree);
+  //////console.log(root_kdtree);
 }
 
 // return the class of input image with out processing
@@ -154,8 +170,8 @@ function HOG(arr){
           angles[y].push(angle);
       }
   }
-  console.log('sobel data',sobelData);
-  console.log('sobel angles',angles);
+ // ////console.log('sobel data',sobelData);
+ // ////console.log('sobel angles',angles);
 
   h = [];
   for (let i = 0; i < 7; i++) {
@@ -182,7 +198,7 @@ function HOG(arr){
           }
       }
   }
-  console.log(h);
+ // ////console.log(h);
   let final = [];
   for (let i = 0; i < h.length; i++) {
       const element = h[i];
@@ -193,7 +209,7 @@ function HOG(arr){
 
 
 function clasificarMatriz(arr28x28){
-  console.log(arr28x28);
+  //////console.log(arr28x28);
 
 
   
@@ -202,7 +218,7 @@ function clasificarMatriz(arr28x28){
   query_point = HOG(arr28x28);
   best = null;
   k_closest_point(root_kdtree,query_point,0,best);        
-  console.log("knn", points_knn);
+  //////console.log("knn", points_knn);
   let txt = "";
 
   let cont_class = [0,0,0,0,0,0,0,0,0,0];
@@ -218,7 +234,7 @@ function clasificarMatriz(arr28x28){
       max_class = j;
     }    
   }
-  console.log(max_class);
+  //////console.log(max_class);
   return max_class;
 }
 
@@ -277,7 +293,7 @@ app.use(cors({
 }));
 app.get('/dibujo/:id', (req, res) => {
   res.send(arr[req.params.id]);
-  console.log(arr[req.params.id]);
+  ////console.log(arr[req.params.id]);
 })
 app.post('/clasificar', jsonParser, function (req, res) {  
   // Prepare output in JSON format  
@@ -287,13 +303,13 @@ app.post('/clasificar', jsonParser, function (req, res) {
 
 app.get('/accuracy', (req, res) => {
   res.send(arr[req.params.id]);
-  console.log(arr[req.params.id]);
+  ////console.log(arr[req.params.id]);
 })
 
 
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
+  ////console.log(`Example app listening on port ${port}`)
 })
 
 
@@ -344,18 +360,19 @@ function generate_dot(node) {
       return;
    }else{
       if(node.left!=null)
-         console.log(node.point+"=>"+node.left.point);
+         ////console.log(node.point+"=>"+node.left.point);
       
       generate_dot(node.left);
       
       if(node.right!=null)
-         console.log(node.point+"=>"+node.right.point);
+         ////console.log(node.point+"=>"+node.right.point);
       generate_dot(node.right);
    }
 }
 function build_kdtree(points, depth = 0) {
-   var classdf = points[0][0];
-   let points_data = points[0][1];   
+
+  //console.log(points);
+    
    var n = points.length;
    var axis = depth % k;
 
@@ -364,7 +381,9 @@ function build_kdtree(points, depth = 0) {
       return null;
    }
    if (n == 1) {
-      return new Node(points_data, axis, classdf)
+    var classdf = points[0][0];
+    let points_data = points[0][1]; 
+    return new Node(points_data, axis, classdf)
    }
 
    var median = Math.floor(points.length / 2);
@@ -373,12 +392,12 @@ function build_kdtree(points, depth = 0) {
    points.sort(function (a, b) {
       return a[1][axis] - b[1][axis];
    });
-   //console.log(points);
+   //////console.log(points);
 
    var left = points.slice(0, median);
    var right = points.slice(median + 1);
 
-   //console.log(right);
+   //////console.log(right);
 
    var node = new Node(points[median][1].slice(0, k), axis, points[median][0]);
    node.left = build_kdtree(left, depth + 1);
@@ -517,7 +536,7 @@ function range_query_circle (node , center , radio , queue , depth = 0) {
     let axis   = depth % k;
     nodeValue  = node.point[ axis ];
     pointValue = center[ axis ];
-    //console.log('range circl  dept',depth,node.point)
+    //////console.log('range circl  dept',depth,node.point)
      if(distanceSquared ( node.point , center )<radio){
         queue.push(node);
     }
@@ -550,7 +569,7 @@ function range_query_rectangle (node , box , queue , depth = 0) {
     let axis   = depth % k;
     nodeValue  = node.point[ axis ];
     
-    //console.log(node.point,distanceSquared ( node.point, center ));
+    //////console.log(node.point,distanceSquared ( node.point, center ));
     let isInside = true;
     depth = depth +1 ;
 
