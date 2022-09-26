@@ -101,7 +101,10 @@ function cargarImagenMinix(){
 
     Http.onreadystatechange = (e) => {
         if(e.currentTarget.readyState==4 && e.currentTarget.status==200){
-            let data = int(JSON.parse(Http.responseText));
+            let data1 = JSON.parse(Http.responseText);
+            let data = data1.map(function (x) { 
+                return parseInt(x, 10); 
+            });
             console.log(data)
 
             var arr = [];
