@@ -38,17 +38,7 @@ function setup() {
  
     createCanvas(tamanio*escala,tamanio*escala);
 
-<<<<<<< HEAD
 
-=======
-    
-    // d3.csv("./mnist_train,csv", function(data) {
-    //     for (var i = 0; i < 2; i++) {
-    //         console.log(data );
-            
-    //     }
-    // });
->>>>>>> 03e90459905d7ceb9d9dd895d50085ab58fef5a5
 }
 
 function draw() {
@@ -99,17 +89,13 @@ function draw() {
 
 function cargarImagenMinix(){
     const Http = new XMLHttpRequest();
-<<<<<<< HEAD
     let idMnist = document.getElementById('idMnist').value
     const url=urlminix+idMnist;
-=======
-    const url=urlminix+"2";
->>>>>>> 03e90459905d7ceb9d9dd895d50085ab58fef5a5
+
     Http.open("GET", url);
     Http.send();
     console.log(url);
     Http.onreadystatechange = (e) => {
-<<<<<<< HEAD
         let obj = JSON.parse(Http.responseText);
         console.log('que numero es ' , obj[0]);
        
@@ -125,23 +111,7 @@ function listToMatrix(list, elementsPerSubArray) {
     for(let i = 0; i < 28 ; i++){
         for(let j = 0; j < 28 ; j++){
                 arreglo[i][j]=parseInt(list[j*28+i]);
-=======
-        if(e.currentTarget.readyState==4 && e.currentTarget.status==200){
-            let data1 = JSON.parse(Http.responseText);
-            let data = data1.map(function (x) { 
-                return parseInt(x, 10); 
-            });
-            console.log(data)
-
-            var arr = [];
-            for(let i = 0; i < 28 ; i++){
-                arr[i]=[];
-                for(let j = 0; j < 28 ; j++){
-                    arr[i][j] = data[j*28+i];
-                }
-            }
-            console.log(HOG(arr));
->>>>>>> 03e90459905d7ceb9d9dd895d50085ab58fef5a5
+        
         }
     }
 
@@ -237,4 +207,3 @@ function HOG(arr){
     return final;
 }
 
-cargarImagenMinix();
