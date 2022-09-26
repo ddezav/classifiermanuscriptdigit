@@ -1,5 +1,5 @@
-k = 2;
 MAX_VECINOS = 3;
+k = 294;
 points_knn =[];
 distances_knn =[];
 class Point {
@@ -12,11 +12,12 @@ class Point {
 
 
 class Node {
-   constructor(point, axis) {
+   constructor(point, axis,classdf) {
       this.point = point;
       this.left = null;
       this.right = null;
       this.axis = axis;
+      this.classdf = classdf;
    }
 }
 
@@ -40,6 +41,8 @@ function generate_dot(node) {
    }
 }
 function build_kdtree(points, depth = 0) {
+   var classdf = points[0][0];
+   let points_data = points[0][1];   
    var n = points.length;
    var axis = depth % k;
 
@@ -48,14 +51,14 @@ function build_kdtree(points, depth = 0) {
       return null;
    }
    if (n == 1) {
-      return new Node(points[0], axis)
+      return new Node(points_data, axis, classdf)
    }
 
    var median = Math.floor(points.length / 2);
 
    // sort by the axis
    points.sort(function (a, b) {
-      return a[axis] - b[axis];
+      return a[1][axis] - b[1][axis];
    });
    //console.log(points);
 
@@ -64,7 +67,7 @@ function build_kdtree(points, depth = 0) {
 
    //console.log(right);
 
-   var node = new Node(points[median].slice(0, k), axis);
+   var node = new Node(points[median][1].slice(0, k), axis, points[median][0]);
    node.left = build_kdtree(left, depth + 1);
    node.right = build_kdtree(right, depth + 1);
 
@@ -77,41 +80,7 @@ function build_kdtree(points, depth = 0) {
     return  Math.max(getHeight(node.left)+1, getHeight(node.right+1));
 
  }
- function build_kdtree(points, depth = 0){
-    var n = points.length;
-    var axis = depth % k;
-    
-    
-    if (n <= 0){
-    return null;
-    }
-    if (n == 1){
-    return new Node(points[0], axis)
-    }
-    
-    var median = Math.floor(points.length / 2);
-    
-    // sort by the axis
-    points.sort(function(a, b)
-    {
-    return a[axis] - b[axis];
-    });
-    //console.log(points);
-    
-    var left = points.slice(0, median);
-    var right = points.slice(median + 1);
-    
-    //console.log(right);
-    
-    var node = new Node(points[median].slice(0, k), axis);
-    node.left = build_kdtree(left, depth + 1);
-    node.right = build_kdtree(right, depth + 1);
-    
-    return node;
-    
-    }
-
-
+ 
 function distanceSquared ( point1 , point2 ){
     var distance = 0;
     for (var i = 0; i < k; i ++)
@@ -185,7 +154,7 @@ function k_closest_point (node , point , depth = 0, best = null ) {
 
         best = ( d1 < d2 ) ? best : node.point;
         
-        obj = {point:node.point,d:d2};
+        obj = {point:node.point,d:d2,class:node.classdf};
         points_knn.push(obj);
         
         points_knn.sort(function(a, b){
@@ -198,7 +167,7 @@ function k_closest_point (node , point , depth = 0, best = null ) {
     } else {
         best = node.point;
         let d2 = distanceSquared ( node.point , point );
-        obj = {point:node.point,d:d2};
+        obj = {point:node.point,d:d2,class:node.classdf};
         points_knn.push(obj);
     }
 
